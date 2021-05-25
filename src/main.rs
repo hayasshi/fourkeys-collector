@@ -1,8 +1,15 @@
+mod github;
+
 use clap::{ArgSettings, Clap};
+use self::github::Client;
 
 fn main() {
     let opts = Opts::parse();
-    println!("{:#?}", opts);
+    println!("options: {:#?}", opts);
+
+    let github_client = Client::new(opts.username, opts.github_token);
+    let prs = github_client.get_pull_requests(opts.repo.as_str(), opts.base.as_str());
+    println!("pull requests: {:#?}", prs);
 }
 
 #[derive(Clap, Debug)]
@@ -11,7 +18,10 @@ struct Opts {
     /// 対象リポジトリ名 `org/repo`
     repo: String,
 
-    /// GitHub personal access token. scope=repo:status
+    /// GitHub アカウント名
+    username: String,
+
+    /// GitHub personal access token. scope=repo
     #[clap(long, env, setting = ArgSettings::HideEnvValues)]
     github_token: String,
 
