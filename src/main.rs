@@ -1,14 +1,15 @@
 mod github;
 
+use anyhow::Result;
 use clap::{ArgSettings, Clap};
-
-fn main() {
+fn main() -> Result<()> {
     let opts = Opts::parse();
     println!("options: {:#?}", opts);
 
     let github_client = github::Client::new(opts.username, opts.github_token);
-    let results = github_client.get_pull_requests(opts.repo.as_str(), opts.base.as_str());
+    let results = github_client.get_pull_requests(opts.repo.as_str(), opts.base.as_str())?;
     println!("results: {:#?}", results);
+    Ok(())
 }
 
 #[derive(Clap, Debug)]
