@@ -29,6 +29,19 @@ impl Client {
         let result = client.send().expect("Failed send request.");
         result.json::<Vec<PullRequest>>().expect("Failed deserialize response.")
     }
+
+    pub fn get_releases(&self, repo: &str) -> Vec<Release> {
+        let url = format!("{base_url}/repos/{orgrepo}/releases", base_url = GITHUB_URL, orgrepo = repo);
+        println!("{}", url);
+        let client = reqwest::blocking::Client::new()
+            .get(url)
+            .header("Authorization", format!("token {}", &self.token))
+            .header("accept", "application/vnd.github.v3+json")
+            .header("User-Agent", &self.username);
+
+        let result = client.send().expect("Failed send request.");
+        result.json::<Vec<Release>>().expect("Failed deserialize response.")
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -37,4 +50,13 @@ pub struct PullRequest {
     pub state: String,
     pub merged_at: Option<String>, // Some: merged, None: closed
     pub commits_url: String,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Release {
+    pub name: String,
+    pub tag_name: String,
+    pub body: String,
+    pub created_at: Option<String>,
+    pub published_at: Option<String>,
 }
