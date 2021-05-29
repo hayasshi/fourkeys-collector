@@ -1,7 +1,7 @@
 mod github;
 
-use clap::{ArgSettings, Clap};
 use anyhow::Result;
+use clap::{ArgSettings, Clap};
 fn main() -> Result<()> {
     let opts = Opts::parse();
     println!("options: {:#?}", opts);
