@@ -1,6 +1,7 @@
 static GITHUB_URL: &'static str = "https://api.github.com";
 
 use serde::Deserialize;
+use anyhow::Result;
 
 pub struct Client {
     username: String,
@@ -16,7 +17,7 @@ impl Client {
         }
     }
 
-    pub fn get_pull_requests(&self, repo: &str, base: &str) -> Vec<PullRequest> {
+    pub fn get_pull_requests(&self, repo: &str, base: &str) -> Result<Vec<PullRequest>> {
         let url = format!("{base_url}/repos/{orgrepo}/pulls", base_url = GITHUB_URL, orgrepo = repo);
         println!("{}", url);
         let client = reqwest::blocking::Client::new()
@@ -26,11 +27,11 @@ impl Client {
             .header("User-Agent", &self.username)
             .query(&[("base", base), ("state", "closed")]);
         
-        let result = client.send().expect("Failed send request.");
-        result.json::<Vec<PullRequest>>().expect("Failed deserialize response.")
+        let result = client.send()?.json::<Vec<PullRequest>>()?;
+        Ok(result)
     }
 
-    pub fn get_releases(&self, repo: &str) -> Vec<Release> {
+    pub fn get_releases(&self, repo: &str) -> Result<Vec<Release>> {
         let url = format!("{base_url}/repos/{orgrepo}/releases", base_url = GITHUB_URL, orgrepo = repo);
         println!("{}", url);
         let client = reqwest::blocking::Client::new()
@@ -39,9 +40,9 @@ impl Client {
             .header("accept", "application/vnd.github.v3+json")
             .header("User-Agent", &self.username);
 
-        let result = client.send().expect("Failed send request.");
-        result.json::<Vec<Release>>().expect("Failed deserialize response.")
-    }
+            let result = client.send()?.json::<Vec<Release>>()?;
+            Ok(result)
+        }
 }
 
 #[derive(Deserialize, Debug)]
