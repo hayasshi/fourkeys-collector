@@ -1,4 +1,4 @@
-static GITHUB_URL: &'static str = "https://api.github.com";
+static GITHUB_URL: &str = "https://api.github.com";
 
 use anyhow::Result;
 use serde::Deserialize;
