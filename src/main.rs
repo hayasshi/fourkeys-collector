@@ -7,8 +7,23 @@ fn main() -> Result<()> {
     println!("options: {:#?}", opts);
 
     let github_client = github::Client::new(opts.username, opts.github_token);
-    let results = github_client.get_pull_requests(opts.repo.as_str(), opts.base.as_str())?;
-    println!("results: {:#?}", results);
+
+    let mut metrics = Vec::new();
+    let prs = github_client.get_merged_pull_requests(opts.repo.as_str(), opts.base.as_str())?;
+    for pr in prs.iter().filter(|pr| pr.merged_at.is_some()) {
+        let commits = github_client.get_commits_by_url(pr.commits_url.as_str())?;
+        for commit in commits {
+            metrics.push(GitHubMetrics {
+                pr_merged_at: pr.merged_at.as_ref().unwrap().to_string(),
+                commit_author: commit.commit.author.name,
+                commit_date: commit.commit.author.date,
+            });
+        }
+    }
+    for m in metrics {
+        println!("{:?}", m);
+    }
+
     Ok(())
 }
 
@@ -36,4 +51,11 @@ struct Opts {
     /// 対象期間 to (JST) `yyyyMM`
     #[clap(long)]
     to: Option<String>,
+}
+
+#[derive(Debug)]
+struct GitHubMetrics {
+    pub pr_merged_at: String,
+    pub commit_author: String,
+    pub commit_date: String,
 }
