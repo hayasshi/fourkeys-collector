@@ -21,7 +21,7 @@ impl Client {
             .header("User-Agent", &self.username)
     }
 
-    pub fn get_pull_requests(&self, repo: &str, base: &str) -> Result<Vec<PullRequest>> {
+    pub fn get_merged_pull_requests(&self, repo: &str, base: &str) -> Result<Vec<PullRequest>> {
         let url = format!(
             "{base_url}/repos/{orgrepo}/pulls",
             base_url = GITHUB_URL,

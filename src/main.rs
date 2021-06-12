@@ -9,7 +9,7 @@ fn main() -> Result<()> {
     let github_client = github::Client::new(opts.username, opts.github_token);
 
     let mut metrics = Vec::new();
-    let prs = github_client.get_pull_requests(opts.repo.as_str(), opts.base.as_str())?;
+    let prs = github_client.get_merged_pull_requests(opts.repo.as_str(), opts.base.as_str())?;
     for pr in prs.iter().filter(|pr| pr.merged_at.is_some()) {
         let commits = github_client.get_commits_by_url(pr.commits_url.as_str())?;
         for commit in commits {
