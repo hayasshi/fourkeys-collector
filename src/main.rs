@@ -15,23 +15,31 @@ fn main() -> Result<()> {
     let mut metrics = Vec::new();
     let tz_jst = FixedOffset::east(9 * 3600);
 
-    let prs = github_client.get_merged_pull_requests(opts.repo.as_str(), opts.base.as_str())?;
-    for pr in prs.iter().filter(|pr| pr.merged_at.is_some()) {
-        let merged_at = DateTime::parse_from_rfc3339(pr.merged_at.as_ref().unwrap().as_str())?
-            .with_timezone(&tz_jst);
+    let mut count: u8 = 0;
+    loop {
+        count += 1;
 
-        let commits = github_client.get_commits_by_url(pr.commits_url.as_str())?;
-        for commit in commits {
-            let commit_date = DateTime::parse_from_rfc3339(commit.commit.author.date.as_str())?
+        let prs = github_client.get_merged_pull_requests(opts.repo.as_str(), opts.base.as_str(), count)?;
+        if prs.is_empty() {
+            break;
+        }
+        for pr in prs.iter().filter(|pr| pr.merged_at.is_some()) {
+            let merged_at = DateTime::parse_from_rfc3339(pr.merged_at.as_ref().unwrap().as_str())?
                 .with_timezone(&tz_jst);
-            let duration_seconds_until_merged = merged_at.timestamp() - commit_date.timestamp();
 
-            metrics.push(GitHubMetrics {
-                commit_author: commit.commit.author.name,
-                commit_date: commit_date.format("%Y-%m-%d %H:%M:%S").to_string(),
-                merged_at: merged_at.format("%Y-%m-%d %H:%M:%S").to_string(),
-                duration_seconds_until_merged,
-            });
+            let commits = github_client.get_commits_by_url(pr.commits_url.as_str())?;
+            for commit in commits {
+                let commit_date = DateTime::parse_from_rfc3339(commit.commit.author.date.as_str())?
+                    .with_timezone(&tz_jst);
+                let duration_seconds_until_merged = merged_at.timestamp() - commit_date.timestamp();
+
+                metrics.push(GitHubMetrics {
+                    commit_author: commit.commit.author.name,
+                    commit_date: commit_date.format("%Y-%m-%d %H:%M:%S").to_string(),
+                    merged_at: merged_at.format("%Y-%m-%d %H:%M:%S").to_string(),
+                    duration_seconds_until_merged,
+                });
+            }
         }
     }
 
