@@ -1,5 +1,6 @@
 [package]
-name = "fourkeys-collector"
+# collect four keys
+name = "c4k"
 version = "0.1.0"
 authors = ["hayasshi <daisuke0884@gmail.com>"]
 edition = "2018"

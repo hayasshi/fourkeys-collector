@@ -19,7 +19,11 @@ fn main() -> Result<()> {
     loop {
         count += 1;
 
-        let prs = github_client.get_merged_pull_requests(opts.repo.as_str(), opts.base.as_str(), count)?;
+        let prs = github_client.get_merged_pull_requests(
+            opts.repo.as_str(),
+            opts.base.as_str(),
+            count,
+        )?;
         if prs.is_empty() {
             break;
         }
@@ -53,12 +57,14 @@ fn main() -> Result<()> {
 }
 
 #[derive(Clap, Debug)]
-#[clap(name = "fourkeys-collector", version)]
+#[clap(name = "c4k", version)]
 struct Opts {
     /// 対象リポジトリ名 `org/repo`
+    #[clap(short, long)]
     repo: String,
 
     /// GitHub アカウント名
+    #[clap(short, long)]
     username: String,
 
     /// GitHub personal access token. scope=repo
@@ -69,11 +75,11 @@ struct Opts {
     #[clap(short, long, default_value = "master")]
     base: String,
 
-    /// 対象期間 from (JST) `yyyyMM`
+    /// 対象期間 (JST) from `yyyyMM`
     #[clap(long)]
     from: Option<String>,
 
-    /// 対象期間 to (JST) `yyyyMM`
+    /// 対象期間 (JST) to `yyyyMM`
     #[clap(long)]
     to: Option<String>,
 }
