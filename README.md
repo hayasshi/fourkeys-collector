@@ -39,3 +39,9 @@ e.g.
 ```
 GITHUB_TOKEN=${your_token} c4k -u hayasshi -r hayasshi/fourkeys-collector -b main --from 202101 --to 202112
 ```
+
+### Rust project のまま実行する場合
+
+```
+GITHUB_TOKEN=${your_token} cargo run -- -u hayasshi -r hayasshi/fourkeys-collector -b main --from 202101 --to 202112
+```
