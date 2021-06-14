@@ -19,7 +19,11 @@ fn main() -> Result<()> {
     loop {
         count += 1;
 
-        let prs = github_client.get_merged_pull_requests(opts.repo.as_str(), opts.base.as_str(), count)?;
+        let prs = github_client.get_merged_pull_requests(
+            opts.repo.as_str(),
+            opts.base.as_str(),
+            count,
+        )?;
         if prs.is_empty() {
             break;
         }
@@ -53,7 +57,7 @@ fn main() -> Result<()> {
 }
 
 #[derive(Clap, Debug)]
-#[clap(name = "fourkeys-collector", version)]
+#[clap(name = "c4k", version)]
 struct Opts {
     /// 対象リポジトリ名 `org/repo`
     repo: String,
