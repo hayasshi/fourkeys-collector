@@ -27,7 +27,7 @@ impl Client {
             base_url = GITHUB_URL,
             orgrepo = repo
         );
-        println!("Fetch pull requests: {}", url);
+        log::debug!("Fetch pull requests: {}", url);
         let builder = reqwest::blocking::Client::new().get(url);
         let client = self
             .with_headers(builder)
@@ -43,7 +43,7 @@ impl Client {
             base_url = GITHUB_URL,
             orgrepo = repo
         );
-        println!("Fetch releases: {}", url);
+        log::debug!("Fetch releases: {}", url);
         let builder = reqwest::blocking::Client::new().get(url);
         let client = self.with_headers(builder);
 
@@ -52,7 +52,7 @@ impl Client {
     }
 
     pub fn get_commits_by_url(&self, url: &str) -> Result<Vec<Commit>> {
-        println!("Fetch commits: {}", url);
+        log::debug!("Fetch commits: {}", url);
         let client = reqwest::blocking::Client::new()
             .get(url)
             .header("Authorization", format!("token {}", &self.token))

@@ -5,8 +5,10 @@ use chrono::prelude::*;
 use clap::{ArgSettings, Clap};
 
 fn main() -> Result<()> {
+    env_logger::init();
+
     let opts = Opts::parse();
-    println!("options: {:#?}", opts);
+    log::debug!("options: {:#?}", opts);
 
     let github_client = github::Client::new(opts.username, opts.github_token);
 
