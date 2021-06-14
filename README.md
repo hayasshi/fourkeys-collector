@@ -2,7 +2,7 @@
 
 [Four Keys プロジェクト](https://cloud.google.com/blog/ja/products/gcp/using-the-four-keys-to-measure-your-devops-performance) で定義される指標を収集します。
 
-## features
+## Features
 
 - TODO: デプロイの頻度
 - WIP: 変更のリードタイム
@@ -10,6 +10,8 @@
     - Output: csv file
     - Line format: `commit_author, commit_date, merged_at, duration_seconds_until_merged`
     - TODO: 期間を指定して出力できるようにする
+
+特定のブランチに、PullRequest でマージされたら、リリースされたものとみなせるリリースフローを想定しています。
 
 ## Usage
 
