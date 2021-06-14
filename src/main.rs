@@ -1,8 +1,8 @@
 mod github;
 
 use anyhow::Result;
-use clap::{ArgSettings, Clap};
 use chrono::prelude::*;
+use clap::{ArgSettings, Clap};
 
 fn main() -> Result<()> {
     let opts = Opts::parse();
@@ -11,15 +11,17 @@ fn main() -> Result<()> {
     let github_client = github::Client::new(opts.username, opts.github_token);
 
     let mut metrics = Vec::new();
-    let tz_jst = FixedOffset::east(9*3600);
+    let tz_jst = FixedOffset::east(9 * 3600);
 
     let prs = github_client.get_merged_pull_requests(opts.repo.as_str(), opts.base.as_str())?;
     for pr in prs.iter().filter(|pr| pr.merged_at.is_some()) {
-        let merged_at = DateTime::parse_from_rfc3339(pr.merged_at.as_ref().unwrap().as_str())?.with_timezone(&tz_jst);
+        let merged_at = DateTime::parse_from_rfc3339(pr.merged_at.as_ref().unwrap().as_str())?
+            .with_timezone(&tz_jst);
 
         let commits = github_client.get_commits_by_url(pr.commits_url.as_str())?;
         for commit in commits {
-            let commit_date = DateTime::parse_from_rfc3339(commit.commit.author.date.as_str())?.with_timezone(&tz_jst);
+            let commit_date = DateTime::parse_from_rfc3339(commit.commit.author.date.as_str())?
+                .with_timezone(&tz_jst);
             let duration_seconds_until_merged = merged_at.timestamp() - commit_date.timestamp();
 
             metrics.push(GitHubMetrics {
@@ -31,9 +33,11 @@ fn main() -> Result<()> {
         }
     }
 
+    let mut writer = csv::Writer::from_writer(std::io::stdout());
     for m in metrics {
-        println!("{:?}", m);
+        writer.serialize(m)?;
     }
+    writer.flush()?;
 
     Ok(())
 }
@@ -64,7 +68,7 @@ struct Opts {
     to: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(serde::Serialize, Debug)]
 struct GitHubMetrics {
     pub commit_author: String,
     pub commit_date: String,
