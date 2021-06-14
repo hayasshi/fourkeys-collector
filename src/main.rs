@@ -60,9 +60,11 @@ fn main() -> Result<()> {
 #[clap(name = "c4k", version)]
 struct Opts {
     /// 対象リポジトリ名 `org/repo`
+    #[clap(short, long)]
     repo: String,
 
     /// GitHub アカウント名
+    #[clap(short, long)]
     username: String,
 
     /// GitHub personal access token. scope=repo
@@ -73,11 +75,11 @@ struct Opts {
     #[clap(short, long, default_value = "master")]
     base: String,
 
-    /// 対象期間 from (JST) `yyyyMM`
+    /// 対象期間 (JST) from `yyyyMM`
     #[clap(long)]
     from: Option<String>,
 
-    /// 対象期間 to (JST) `yyyyMM`
+    /// 対象期間 (JST) to `yyyyMM`
     #[clap(long)]
     to: Option<String>,
 }
